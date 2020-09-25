@@ -1,14 +1,16 @@
+//const { json } = require("express");
+
 let btnAgregar = document.querySelector("#btnAgregar");
 btnAgregar.addEventListener("click", agregar);
 let btnTotal = document.querySelector("#btnTotal");
 btnTotal.addEventListener("click", sumar);
+//console.log(load());
 let compras = [];
 
 function agregar() {
     console.log("Funcion Agregar");
     let producto = document.querySelector('#producto').value;
-    let precio =
-    parseInt(document.querySelector('#precio').value);
+    let precio = parseInt(document.querySelector('#precio').value);
     let renglon = {
     "producto": producto,
     "precio": precio
@@ -35,23 +37,34 @@ function agregar() {
 
 function mostrarTablaCompras() {
     html = "";
-    for (let r of compras) {
-    html += `
-    <tr>
-    <td>${r.producto}</td>
-    <td>${r.precio}</td>
-    /tr>
-    `;
+    for (let i = 0; i < compras.length; i++) {
+        html += `
+               <tr>
+                   <td>${compras[i].producto_nombre}</td>
+                   <td>${compras[i].precio}</td>
+                   </tr>
+           `;
     }
     document.querySelector("#tblCompras").innerHTML = html;
    }
-    
 
-async function load() {
-     let container =document.querySelector("#use-ajax");
-     let response = await fetch(url);
-     if (response.ok) {
-      let t = await response.json();
-      container.innerHTML =t;
-       }
+   async function load() {
+        let container = document.querySelector("#use-ajax");
+        container.innerHTML = "<h1>Loading...</h1>";
+             try {
+                let response = await fetch('/productos');
+                if (response.ok) {
+                let t = await response.json();
+                compras=t;
+                mostrarTablaCompras();
+                container.innerHTML = "";
+                //console.log(json);
     }
+            else
+         container.innerHTML = "<h1>Error - Failed URL!</h1>";
+        }
+            catch (response) {
+        container.innerHTML = "<h1>Connection error</h1>";
+         };
+    }
+    load();
